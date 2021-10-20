@@ -1,9 +1,4 @@
 Require Import ZArith.
-Require Import ZArithRing.
-Require Import Zcomplements.
-
-Unset Standard Proposition Elimination Names.
-
 (** Divisibility *)
 
 Definition divide (a b : Z) : Prop := exists q : Z, b = (q * a)%Z.
@@ -13,32 +8,19 @@ Notation "( x | y )" := (divide x y) (at level 0) : Z_scope.
 Local Open Scope Z_scope.
 
 
-(** Results *)
-
-Lemma divide_refl : forall a : Z, (a | a).
-Proof.
-intros. Admitted.
-(* apply divide_intro with 1; ring. *)
-(* Qed. *)
-
-
-Lemma divide_refl_d: forall a: Z, (a | a).
-Proof. 
-intros. unfold divide. exists 1. ring. 
-Qed. 
+Lemma divide_refl_: forall a: Z, (a | a).
+Proof.  intros. unfold divide. exists 1. ring.
+Qed.
 
 (* ========================================== *)
 Lemma divide_mult_left : forall a b c : Z, (a | b) -> ((c * a)%Z | (c * b)%Z).
 Proof.
 intros. unfold divide.
-destruct H. 
-exists x.  
-rewrite H. 
+destruct H.
+exists x.
+rewrite H.
 ring.
-Qed.  
-
-
-
+Qed.
 
 Require Import Zdiv.
 Require Import ZArith.Zorder.
@@ -53,13 +35,12 @@ Lemma gcd_sym : forall a b d : Z, gcd a b d -> gcd b a d.
 Proof.
 intros. destruct H. destruct H0.
 split. apply H0. split. apply H.
-intros. 
-apply H1. 
-split. 
-destruct H2. apply H3. 
+intros.
+apply H1.
+split.
+destruct H2. apply H3.
 destruct H2. apply H2.
-Qed.  
- 
+Qed.
 
 
 Lemma gcd_0 : forall a : Z, gcd a 0 a.
@@ -69,7 +50,7 @@ split.
 exists 1%Z.
 ring.
 split.
-exists 0%Z. 
+exists 0%Z.
 ring.
 intro. move => H.
 destruct H.
@@ -83,7 +64,7 @@ Admitted.
 
 Lemma gcd_minus : forall a b d : Z, gcd a (- b) d -> gcd b a d.
 Proof.
- intros. split. 
+ intros. split.
 destruct H.
 destruct H0.
 Admitted.

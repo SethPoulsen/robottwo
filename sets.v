@@ -8,7 +8,8 @@ Lemma in_complements_notin_union: forall (A B: Ensemble U) (x: U),
     In U (Complement U A) x -> In U (Complement U B) x -> 
         ~ In U (Union U A B) x.
 Proof.
-intros. 
+intros.
+
 (* unfold not. *)
 move=> inAuB.
 destruct inAuB.
@@ -47,17 +48,20 @@ Proof.
     intros. 
     move=> U1. 
     move=> inAuB.
-    destruct inAuB.
+    (* destruct inAuB. *)
+    case inAuB.
     (* Case 1, x \in A *)
+    intros.
     apply Union_introl.
     apply H.
     (* Case 2, x \in B*)
+    intros.
     apply Union_intror.
     apply Union_introl.
-    apply H.
+    apply H. Show Proof.
 Qed.
     
-
+(* TODO why does using case un-introduce variables so I then have to use intros?*)
 
 (* Doing this stuff with `In` is weird because it should be translated the same as `:` for the 
 proofs that I want to write I guess? But its really annoying to deal with and makin that 
