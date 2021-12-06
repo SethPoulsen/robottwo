@@ -12,7 +12,7 @@ Local Open Scope Z_scope.
 Lemma divide_refl_inst: forall a: Z, (a | a).
 Proof.
 
-    PreExplain intro x.
+PreExplain intro x.
 intro x.
 PostExplain intro x.
 
