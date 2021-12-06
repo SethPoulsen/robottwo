@@ -11,14 +11,22 @@ Local Open Scope Z_scope.
 
 Lemma divide_refl_inst: forall a: Z, (a | a).
 Proof.
+
+    PreExplain intro x.
 intro x.
-ExploreProof intro x.
+PostExplain intro x.
+
+PreExplain unfold divide.
 unfold divide.
-ExploreProof unfold divide.
+PostExplain unfold divide.
+
+PreExplain exists 1.
 exists 1.
-ExploreProof exists 1.
+PostExplain exists 1.
+
+PreExplain ring.
 ring.
-ExploreProof ring.
+PostExplain ring.
 Qed.
 
 

@@ -15,8 +15,9 @@ open Stdarg
 
 }
 
-VERNAC COMMAND EXTEND ExploreProof CLASSIFIED AS QUERY
-| ![ proof_query ] [ "ExploreProof" ] ->
+
+VERNAC COMMAND EXTEND PreExplain CLASSIFIED AS QUERY
+| ![ proof_query ] [ "PreExplain" "intro" ident(i)] ->
   { fun ~pstate ->
     (* let sigma, env = Declare.Proof.get_current_context pstate in
     let pprf = Proof.partial_proof (Declare.Proof.get pstate) in
@@ -40,8 +41,23 @@ VERNAC COMMAND EXTEND ExploreProof CLASSIFIED AS QUERY
     Feedback.msg_notice
       (Pp.prlist_with_sep Pp.fnl (Printer.pr_econstr_env env sigma) goals) *)
   }
-| ![ proof_query ] [ "ExploreProof" "intro" ident(i)] ->
+| ![ proof_query ] [ "PreExplain" "exists" nat(n)] ->
+  { fun ~pstate -> Feedback.msg_notice (Pp.str "") }
+  | ![ proof_query ] [ "PreExplain" "unfold" ident(i) ] ->
+  { fun ~pstate -> Feedback.msg_notice (Pp.str "") }
+  | ![ proof_query ] [ "PreExplain" "ring" ] ->
+  { fun ~pstate -> Feedback.msg_notice (Pp.str "") }
+END
+
+
+VERNAC COMMAND EXTEND PostExplain CLASSIFIED AS QUERY
+| ![ proof_query ] [ "PostExplain" "intro" ident(i)] ->
   { fun ~pstate ->
+    (* let sigma, env = Declare.Proof.get_current_context pstate in
+    let pprf = Proof.partial_proof (Declare.Proof.get pstate) in
+    Feedback.msg_notice
+      (Pp.prlist_with_sep Pp.fnl (Printer.pr_econstr_env env sigma) pprf) *)
+   (* ; *)
     let sigma, env = Declare.Proof.get_current_context pstate in
     let pprf = Proof.partial_proof (Declare.Proof.get pstate) in
     Feedback.msg_notice
@@ -52,44 +68,17 @@ VERNAC COMMAND EXTEND ExploreProof CLASSIFIED AS QUERY
 
     let p: Proof.t = Declare.Proof.get pstate in
     Feedback.msg_notice (strbrk "Proof: " ++ (Proof.pr_proof p))
-  }
-| ![ proof_query ] [ "ExploreProof" "exists" nat(n)] ->
-  { fun ~pstate ->
-    let sigma, env = Declare.Proof.get_current_context pstate in
-    let pprf = Proof.partial_proof (Declare.Proof.get pstate) in
+
+
+    (* let pprf = Proof.partial_proof (Declare.Proof.get_open_goals pstate) in *)
+    (* let Declare.Proof.{ goals; stack; sigma } = Declare.Proof.data pstate in
     Feedback.msg_notice
-      (Pp.prlist_with_sep Pp.fnl (Printer.pr_econstr_env env sigma) pprf) ;
-
-    let debug sigma = Termops.pr_evar_map ~with_univs:true None env sigma in
-    Feedback.msg_notice (strbrk "State: " ++ debug sigma) ;
-
-    let p: Proof.t = Declare.Proof.get pstate in
-    Feedback.msg_notice (strbrk "Proof: " ++ (Proof.pr_proof p))
+      (Pp.prlist_with_sep Pp.fnl (Printer.pr_econstr_env env sigma) goals) *)
   }
-  | ![ proof_query ] [ "ExploreProof" "unfold" ident(i) ] ->
-  { fun ~pstate ->
-    let sigma, env = Declare.Proof.get_current_context pstate in
-    let pprf = Proof.partial_proof (Declare.Proof.get pstate) in
-    Feedback.msg_notice
-      (Pp.prlist_with_sep Pp.fnl (Printer.pr_econstr_env env sigma) pprf) ;
-
-    let debug sigma = Termops.pr_evar_map ~with_univs:true None env sigma in
-    Feedback.msg_notice (strbrk "State: " ++ debug sigma) ;
-
-    let p: Proof.t = Declare.Proof.get pstate in
-    Feedback.msg_notice (strbrk "Proof: " ++ (Proof.pr_proof p))
-  }
-  | ![ proof_query ] [ "ExploreProof" "ring" ] ->
-  { fun ~pstate ->
-    let sigma, env = Declare.Proof.get_current_context pstate in
-    let pprf = Proof.partial_proof (Declare.Proof.get pstate) in
-    Feedback.msg_notice
-      (Pp.prlist_with_sep Pp.fnl (Printer.pr_econstr_env env sigma) pprf) ;
-
-    let debug sigma = Termops.pr_evar_map ~with_univs:true None env sigma in
-    Feedback.msg_notice (strbrk "State: " ++ debug sigma) ;
-
-    let p: Proof.t = Declare.Proof.get pstate in
-    Feedback.msg_notice (strbrk "Proof: " ++ (Proof.pr_proof p))
-  }
+| ![ proof_query ] [ "PostExplain" "exists" nat(n)] ->
+  { fun ~pstate -> Feedback.msg_notice (Pp.str "") }
+  | ![ proof_query ] [ "PostExplain" "unfold" ident(i) ] ->
+  { fun ~pstate -> Feedback.msg_notice (Pp.str "") }
+  | ![ proof_query ] [ "PostExplain" "ring" ] ->
+  { fun ~pstate -> Feedback.msg_notice (Pp.str "") }
 END
