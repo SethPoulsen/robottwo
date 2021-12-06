@@ -1,1 +1,1 @@
-Declare ML Module "tuto1_plugin".
+Declare ML Module "robottwo_plugin".
