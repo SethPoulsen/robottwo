@@ -32,8 +32,10 @@ Qed.
 
 Lemma divide_refl: forall a: Z, (a | a).
 Proof.
-intros.
+intro x.
 unfold divide.
 exists 1.
 ring.
 Qed.
+
+

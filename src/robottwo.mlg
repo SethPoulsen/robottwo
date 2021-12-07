@@ -13,6 +13,8 @@ open Pp
    EXTEND directives below, for example the string one. *)
 open Stdarg
 
+let tex_endl = Pp.str ". \\\\ " ;;
+
 let get_evar_name goal =
   let s = Pp.string_of_ppcmds goal in
   let i = (String.index s ' ') + 1 in (* TODO properly extract existential variable name *)
@@ -39,12 +41,13 @@ VERNAC COMMAND EXTEND PreExplain CLASSIFIED AS QUERY
 | ![ proof_query ] [ "PreExplain" "intro" ident(i)] ->
   { fun ~pstate ->
       (* TODO actually extract the type of the introduced variable, don't just assume its Integer *)
-      Feedback.msg_notice ((Pp.str "Let ") ++ Ppconstr.pr_id i ++ (Pp.str " be an arbitrary Integer"))
+      Feedback.msg_notice ((Pp.str "Let ") ++ Ppconstr.pr_id i ++ (Pp.str " be an arbitrary Integer") ++ tex_endl)
   }
 | ![ proof_query ] [ "PreExplain" "exists" int(n)] ->
   { fun ~pstate ->
     let goal = extract_main_goal pstate in
-      Feedback.msg_notice (Pp.str "Choose " ++ get_evar_name goal ++ Pp.str " to be " ++ Pp.int n ) }
+      Feedback.msg_notice (Pp.str "Choose " ++ get_evar_name goal ++ Pp.str " to be " ++ Pp.int n ++ tex_endl)
+  }
 | ![ proof_query ] [ "PreExplain" "unfold" ident(i) ] ->
   { fun ~pstate -> () }
 | ![ proof_query ] [ "PreExplain" "ring" ] ->
@@ -56,19 +59,19 @@ VERNAC COMMAND EXTEND PostExplain CLASSIFIED AS QUERY
 | ![ proof_query ] [ "PostExplain" "intro" ident(i)] ->
   { fun ~pstate ->
     let goal = extract_main_goal pstate in
-      Feedback.msg_notice (Pp.str "Now we must show that " ++ goal)
+      Feedback.msg_notice (Pp.str "Now we must show that " ++ goal ++ tex_endl)
   }
 | ![ proof_query ] [ "PostExplain" "exists" int(n)] ->
   { fun ~pstate ->
     let goal = extract_main_goal pstate in
-      Feedback.msg_notice (Pp.str "Now we must show that " ++ goal)
+      Feedback.msg_notice (Pp.str "Now we must show that " ++ goal ++ tex_endl)
   }
 | ![ proof_query ] [ "PostExplain" "unfold" ident(i) ] ->
   { fun ~pstate -> let goal = extract_main_goal pstate in
-      Feedback.msg_notice (Pp.str "Which by the definition of " ++ Ppconstr.pr_id i ++ Pp.str " means we need to show that " ++ goal)
+      Feedback.msg_notice (Pp.str "Which by the definition of " ++ Ppconstr.pr_id i ++ Pp.str " means we need to show that " ++ goal ++ tex_endl)
  }
 | ![ proof_query ] [ "PostExplain" "ring" ] ->
   { fun ~pstate ->
-    Feedback.msg_notice (Pp.str "By algebraic simplification, this is clearly true.")
+    Feedback.msg_notice (Pp.str "By algebraic simplification, this is clearly true" ++ tex_endl)
   }
 END

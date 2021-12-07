@@ -2,7 +2,6 @@ Require Import ZArith.
 (** Divisibility *)
 
 Definition divide (a b : Z) : Prop := exists q : Z, b = (q * a)%Z.
-
 Notation "( x | y )" := (divide x y) (at level 0) : Z_scope.
 
 Local Open Scope Z_scope.
