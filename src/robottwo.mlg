@@ -15,6 +15,14 @@ open Stdarg
 
 let tex_endl = Pp.str ". \\\\ " ;;
 
+let texify pp =
+  let s = Pp.string_of_ppcmds pp in
+  let s = Str.global_replace (Str.regexp ":") "\\in" s in
+  let s = Str.global_replace (Str.regexp "Z") "\\mathbb{Z}" s in
+  let s = Str.global_replace (Str.regexp "exists") "\\exists" s in
+  let s = Str.global_replace (Str.regexp "->") "\\rightarrow" s in
+    Pp.str ("$" ^ s ^ "$") ;;
+
 let get_evar_name goal =
   let s = Pp.string_of_ppcmds goal in
   let i = (String.index s ' ') + 1 in (* TODO properly extract existential variable name *)
@@ -31,7 +39,7 @@ let extract_main_goal pstate =
            future we should extract it from the data structure properly. *)
   let s = Pp.string_of_ppcmds state in
   let start, finish = (String.index s '-') + 2, (String.index s ']') in
-    Pp.str (String.sub s start (finish - start))
+    texify (Pp.str (String.sub s start (finish - start)))
   ;;
 
 }
@@ -41,16 +49,25 @@ VERNAC COMMAND EXTEND PreExplain CLASSIFIED AS QUERY
 | ![ proof_query ] [ "PreExplain" "intro" ident(i)] ->
   { fun ~pstate ->
       (* TODO actually extract the type of the introduced variable, don't just assume its Integer *)
-      Feedback.msg_notice ((Pp.str "Let ") ++ Ppconstr.pr_id i ++ (Pp.str " be an arbitrary Integer") ++ tex_endl)
+      Feedback.msg_notice ((Pp.str "Let ") ++ texify (Ppconstr.pr_id i) ++ (Pp.str " be an arbitrary element of $\\mathbb{Z}$") ++ tex_endl)
   }
 | ![ proof_query ] [ "PreExplain" "exists" int(n)] ->
   { fun ~pstate ->
     let goal = extract_main_goal pstate in
-      Feedback.msg_notice (Pp.str "Choose " ++ get_evar_name goal ++ Pp.str " to be " ++ Pp.int n ++ tex_endl)
+      Feedback.msg_notice (Pp.str "Choose " ++ texify (get_evar_name goal) ++ Pp.str " to be " ++ texify (Pp.int n) ++ tex_endl)
+  }
+| ![ proof_query ] [ "PreExplain" "exists" ident(i)] ->
+  { fun ~pstate ->
+    let goal = extract_main_goal pstate in
+      Feedback.msg_notice (Pp.str "Choose " ++ texify (get_evar_name goal) ++ Pp.str " to be " ++ texify (Ppconstr.pr_id i) ++ tex_endl)
   }
 | ![ proof_query ] [ "PreExplain" "unfold" ident(i) ] ->
   { fun ~pstate -> () }
 | ![ proof_query ] [ "PreExplain" "ring" ] ->
+  { fun ~pstate -> () }
+| ![ proof_query ] [ "PreExplain" "destruct" ident(h) ] ->
+  { fun ~pstate -> () }
+| ![ proof_query ] [ "PreExplain" "rewrite" ident(h) ] ->
   { fun ~pstate -> () }
 END
 
@@ -66,12 +83,23 @@ VERNAC COMMAND EXTEND PostExplain CLASSIFIED AS QUERY
     let goal = extract_main_goal pstate in
       Feedback.msg_notice (Pp.str "Now we must show that " ++ goal ++ tex_endl)
   }
+| ![ proof_query ] [ "PostExplain" "exists" ident(i)] ->
+  { fun ~pstate ->
+    let goal = extract_main_goal pstate in
+      Feedback.msg_notice (Pp.str "Now we must show that " ++ goal ++ tex_endl)
+  }
 | ![ proof_query ] [ "PostExplain" "unfold" ident(i) ] ->
   { fun ~pstate -> let goal = extract_main_goal pstate in
       Feedback.msg_notice (Pp.str "Which by the definition of " ++ Ppconstr.pr_id i ++ Pp.str " means we need to show that " ++ goal ++ tex_endl)
- }
+  }
 | ![ proof_query ] [ "PostExplain" "ring" ] ->
   { fun ~pstate ->
     Feedback.msg_notice (Pp.str "By algebraic simplification, this is clearly true" ++ tex_endl)
   }
+| ![ proof_query ] [ "PostExplain" "destruct" ident(h) ] ->
+  { fun ~pstate -> let goal = extract_main_goal pstate in
+      Feedback.msg_notice (Pp.str "By the definition of " ++ Ppconstr.pr_id h ++ Pp.str " we know " ++ goal ++ tex_endl)
+ }
+| ![ proof_query ] [ "PostExplain" "rewrite" ident(h) ] ->
+  { fun ~pstate -> () }
 END

@@ -2,6 +2,7 @@
 -I src
 
 theories/Loader.v
+theories/nums.v
 
 src/robottwo.mlg
 src/robottwo_plugin.mlpack
