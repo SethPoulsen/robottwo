@@ -13,8 +13,14 @@ open Pp
    EXTEND directives below, for example the string one. *)
 open Stdarg
 
-let extract_main_goal ppcmd = let s = Pp.string_of_ppcmds ppcmd in
-  Pp.str (String.sub s 1 10) ;;
+let extract_main_goal pstate =
+  let sigma, env = Declare.Proof.get_current_context pstate in
+  let debug sigma = Termops.pr_evar_map ~with_univs:true None env sigma in
+  let state = (strbrk "State: " ++ debug sigma) in
+  let s = Pp.string_of_ppcmds state in
+  let start, finish = (String.index s '-') + 1, (String.index s ']') in
+    Pp.str (String.sub s start (finish - start))
+  ;;
 
 }
 
@@ -22,33 +28,7 @@ let extract_main_goal ppcmd = let s = Pp.string_of_ppcmds ppcmd in
 VERNAC COMMAND EXTEND PreExplain CLASSIFIED AS QUERY
 | ![ proof_query ] [ "PreExplain" "intro" ident(i)] ->
   { fun ~pstate ->
-    (* let sigma, env = Declare.Proof.get_current_context pstate in
-    let pprf = Proof.partial_proof (Declare.Proof.get pstate) in
-    Feedback.msg_notice
-      (Pp.prlist_with_sep Pp.fnl (Printer.pr_econstr_env env sigma) pprf) *)
-   (* ; *)
-    let sigma, env = Declare.Proof.get_current_context pstate in
-    let pprf = Proof.partial_proof (Declare.Proof.get pstate) in
-    Feedback.msg_notice
-      (Pp.prlist_with_sep Pp.fnl (Printer.pr_econstr_env env sigma) pprf) ;
-
-    let debug sigma = Termops.pr_evar_map ~with_univs:true (Some 1) env sigma in
-    (* Feedback.msg_notice (strbrk "State: " ++ debug sigma) ; *)
-    Feedback.msg_notice (extract_main_goal (strbrk "State: " ++ debug sigma) );
-
-    (* let stuff = Termops.pr_evar_list env sigma (Termops.to_list sigma) in
-    Feedback.msg_notice stuff ; *)
-
-    let p: Proof.t = Declare.Proof.get pstate in
-    Feedback.msg_notice (strbrk "Proof: " ++ (Proof.pr_proof p))
-
-    ; Printf.printf "HERE"
-
-
-    (* let pprf = Proof.partial_proof (Declare.Proof.get_open_goals pstate) in *)
-    (* let Declare.Proof.{ goals; stack; sigma } = Declare.Proof.data pstate in
-    Feedback.msg_notice
-      (Pp.prlist_with_sep Pp.fnl (Printer.pr_econstr_env env sigma) goals) *)
+    Feedback.msg_notice (extract_main_goal pstate)
   }
 | ![ proof_query ] [ "PreExplain" "exists" nat(n)] ->
   { fun ~pstate -> Feedback.msg_notice (Pp.str "") }
