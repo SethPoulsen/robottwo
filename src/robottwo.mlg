@@ -1,12 +1,6 @@
   DECLARE PLUGIN "robottwo_plugin"
 
 {
-
-(* If we forget this line and include our own tactic definition using
-  TACTIC EXTEND, as below, then we get the strange error message
-  no implementation available for Tacentries, only when compiling
-  theories/Loader.v
-*)
 (* open Ltac_plugin *)
 open Pp
 (* This module defines the types of arguments to be used in the
@@ -52,13 +46,12 @@ let extract_hypothesis goal =
 ;;
 
 let preexplain_intro pstate i =
-    (* TODO actually extract the type of the introduced variable, don't just assume *)
-    (* let ident = Pp.string_of_ppcmds (Ppconstr.pr_id i) in *)
-    match Pp.string_of_ppcmds (Ppconstr.pr_id i) with
-    | "H" -> let goal = extract_main_goal pstate in
-             let assumption = extract_hypothesis goal in
-                Feedback.msg_notice (Pp.str "Assume that " ++ assumption ++ Pp.str ". We will refer to this assumption as $H$" ++ tex_endl)
-    | _   -> Feedback.msg_notice ((Pp.str "Let ") ++ texify (Ppconstr.pr_id i) ++ (Pp.str " be an arbitrary element of $\\mathbb{Z}$") ++ tex_endl)
+  (* TODO actually extract the type of the introduced variable, don't just assume *)
+  match Pp.string_of_ppcmds (Ppconstr.pr_id i) with
+  | "H" -> let goal = extract_main_goal pstate in
+          let assumption = extract_hypothesis goal in
+              Feedback.msg_notice (Pp.str "Assume that " ++ assumption ++ Pp.str ". We will refer to this assumption as $H$" ++ tex_endl)
+  | _   -> Feedback.msg_notice ((Pp.str "Let ") ++ texify (Ppconstr.pr_id i) ++ (Pp.str " be an arbitrary element of $\\mathbb{Z}$") ++ tex_endl)
 ;;
 }
 
