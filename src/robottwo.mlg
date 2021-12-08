@@ -50,7 +50,7 @@ let preexplain_intro pstate i =
   match Pp.string_of_ppcmds (Ppconstr.pr_id i) with
   | "H" -> let goal = extract_main_goal pstate in
           let assumption = extract_hypothesis goal in
-              Feedback.msg_notice (Pp.str "Assume that " ++ assumption ++ Pp.str ". We will refer to this assumption as $H$" ++ tex_endl)
+              Feedback.msg_notice (Pp.str "Assume that " ++ texify assumption ++ Pp.str ". We will refer to this assumption as $H$" ++ tex_endl)
   | _   -> Feedback.msg_notice ((Pp.str "Let ") ++ texify (Ppconstr.pr_id i) ++ (Pp.str " be an arbitrary element of $\\mathbb{Z}$") ++ tex_endl)
 ;;
 }
