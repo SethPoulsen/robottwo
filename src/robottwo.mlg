@@ -21,17 +21,20 @@ let texify pp =
   let s = Str.global_replace (Str.regexp "Z") "\\mathbb{Z}" s in
   let s = Str.global_replace (Str.regexp "exists") "\\exists" s in
   let s = Str.global_replace (Str.regexp "->") "\\rightarrow" s in
-    Pp.str ("$" ^ s ^ "$") ;;
+    Pp.str ("$" ^ s ^ "$")
+;;
 
 let get_evar_name goal =
   let s = Pp.string_of_ppcmds goal in
   let i = (String.index s ' ') + 1 in (* TODO properly extract existential variable name *)
     Pp.str (String.sub s i 1)
+;;
 
 let get_state pstate =
   let sigma, env = Declare.Proof.get_current_context pstate in
   let debug sigma = Termops.pr_evar_map ~with_univs:true None env sigma in
     (strbrk "State: " ++ debug sigma)
+;;
 
 let extract_main_goal pstate =
   let state = get_state pstate in
@@ -40,13 +43,13 @@ let extract_main_goal pstate =
   let s = Pp.string_of_ppcmds state in
   let start, finish = (String.index s '-') + 2, (String.index s ']') in
     Pp.str (String.sub s start (finish - start))
-  ;;
+;;
 
 let extract_hypothesis goal =
   let s = Pp.string_of_ppcmds goal in
   let len = (String.index s '-') - 1 in
     Pp.str (String.sub s 0 len)
-  ;;
+;;
 
 let preexplain_intro pstate i =
     (* TODO actually extract the type of the introduced variable, don't just assume *)
@@ -54,9 +57,9 @@ let preexplain_intro pstate i =
     match Pp.string_of_ppcmds (Ppconstr.pr_id i) with
     | "H" -> let goal = extract_main_goal pstate in
              let assumption = extract_hypothesis goal in
-                Feedback.msg_notice (Pp.str "Assume that " ++ assumption ++ tex_endl)
+                Feedback.msg_notice (Pp.str "Assume that " ++ assumption ++ Pp.str ". We will refer to this assumption as $H$" ++ tex_endl)
     | _   -> Feedback.msg_notice ((Pp.str "Let ") ++ texify (Ppconstr.pr_id i) ++ (Pp.str " be an arbitrary element of $\\mathbb{Z}$") ++ tex_endl)
-
+;;
 }
 
 
@@ -111,11 +114,11 @@ VERNAC COMMAND EXTEND PostExplain CLASSIFIED AS QUERY
 | ![ proof_query ] [ "PostExplain" "destruct" ident(h) ] ->
   { fun ~pstate ->
       (* TODO: HACK, hardcoded to only work in one special case. Need to figure out how to access information in context properly *)
-      Feedback.msg_notice (Pp.str "Let $x$ be the value that makes this true." ++ tex_endl)
+      Feedback.msg_notice (Pp.str "Let $x$ be the value that makes " ++ texify (Ppconstr.pr_id h) ++ Pp.str " true" ++ tex_endl)
   }
 | ![ proof_query ] [ "PostExplain" "rewrite" ident(h) ] ->
   { fun ~pstate ->
     let goal = extract_main_goal pstate in
       (* TODO: figure out better natural language for referring to things in the context.*)
-      Feedback.msg_notice (Pp.str "By our assumption, this is equivalent to showing " ++ texify goal ++ tex_endl) }
+      Feedback.msg_notice (Pp.str "By " ++ texify (Ppconstr.pr_id h) ++ Pp.str ", this is equivalent to showing " ++ texify goal ++ tex_endl) }
 END

@@ -39,7 +39,11 @@ Qed.
 
 Lemma divide_mult_left : forall a b c : Z, (a | b) -> ((c * a)%Z | (c * b)%Z).
 Proof.
-intros. unfold divide.
+intro a.
+intro b.
+intro c.
+unfold divide.
+intro H.
 destruct H.
 exists x.
 rewrite H.
