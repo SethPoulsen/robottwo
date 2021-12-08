@@ -51,11 +51,11 @@ Proof.
 
 PreExplain intro a.
 intro a.
-PostExplain intro a.
+(* PostExplain intro a. *)
 
 PreExplain intro b.
 intro b.
-PostExplain intro b.
+(* PostExplain intro b. *)
 
 PreExplain intro c.
 intro c.
