@@ -39,7 +39,7 @@ By algebraic simplification, this is clearly true. \\
 
 # Important files
 - `src/robottwo.mlg`: Plugin code
-- `theoreies/nums.v`: Example proofs and their instrumented versions
+- `theories/nums.v`: Example proofs and their instrumented versions
 
 # Running robottwo
 To run the example programs, clone the repository, install the most recent Coq (tested with 8.15.1, some other versions may also work) and the development headers (required for building Coq plugins), and run
