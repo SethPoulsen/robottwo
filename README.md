@@ -20,7 +20,7 @@ ring.
 Qed.
 ```
 
-After instrumenting this proof with our new `ExploreProof` tactic and executing the proof, we obtain the following LaTeX output:
+After instrumenting this proof with our new `PreExplain` and `PostExplain` tactics and executing the proof, we obtain the following LaTeX output:
 
 ```latex
 Let $a$ be an arbitrary element of $\mathbb{Z}$. \\
