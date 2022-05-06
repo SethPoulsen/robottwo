@@ -37,12 +37,13 @@ By $H$, this is equivalent to showing $c * (x * a) = x * (c * a)$. \\
 By algebraic simplification, this is clearly true. \\
 ```
 
-# Overview of Codebase
-`src/robottwo.mlg`: Plugin code
-`theoreies/nums.v`: Example proofs and their instrumented versions
+# Important files
+- `src/robottwo.mlg`: Plugin code
+- `theoreies/nums.v`: Example proofs and their instrumented versions
 
 # Running robottwo
-To run the example programs, clone the repository, install Coq and the required development headers, and run
+To run the example programs, clone the repository, install the most recent Coq (tested with 8.15.1, some other versions may also work) and the development headers (required for building Coq plugins), and run
+
 ```
 make
 ```
