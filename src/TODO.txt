@@ -1,4 +1,0 @@
-look look up the source for that tactic that just tries another tactic!
-
-it will try it then just fail, but What I want to do is inspect it,
-then print stuff about it, then apply it, then (possible) print more stuff about it.
